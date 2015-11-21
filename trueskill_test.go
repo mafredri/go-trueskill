@@ -1,0 +1,225 @@
+package trueskill
+
+import (
+	"testing"
+
+	"github.com/mafredri/go-mathextra"
+)
+
+const epsilon = 1e-5 // Precision for floating point comparison
+
+func testPlayerSkills(t *testing.T, playerSkills Players, wantSkill []float64) {
+	for i, p := range playerSkills {
+		if !mathextra.Float64AlmostEq(p.Mu(), wantSkill[i*2], epsilon) {
+			t.Errorf("p%d.Mu() == %.5f, want %.5f", i, p.Mu(), wantSkill[i*2])
+		}
+		if !mathextra.Float64AlmostEq(p.Sigma(), wantSkill[i*2+1], epsilon) {
+			t.Errorf("p%d.Sigma() == %.5f, want %.5f", i, p.Sigma(), wantSkill[i*2+1])
+		}
+	}
+}
+
+func testProbability(t *testing.T, probability, wantProbability float64) {
+	probability = probability * 100
+	if !mathextra.Float64AlmostEq(probability, wantProbability, epsilon) {
+		t.Errorf("Probability == %.5f, want %.5f", probability, wantProbability)
+	}
+}
+
+func TestTrueSkill_HeadToHead(t *testing.T) {
+	wantSkill := []float64{
+		29.3958320199992000, 7.1714755873261900,
+		20.6041679800008000, 7.1714755873261900,
+	}
+	wantProbability := 47.7593111421005000
+
+	drawProbability := 10.0
+	draw := false
+	ts, err := NewWithDefaults(drawProbability)
+	if err != nil {
+		t.Error(err)
+	}
+
+	players := Players{ts.NewPlayerWithDefaults(), ts.NewPlayerWithDefaults()}
+
+	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
+
+	testPlayerSkills(t, newPlayerSkills, wantSkill)
+	testProbability(t, probability, wantProbability)
+}
+
+func TestTrueSkill_HeadToHead_Draw(t *testing.T) {
+	wantSkill := []float64{
+		25.0000000000000000, 6.4575196623173100,
+		25.0000000000000000, 6.4575196623173100,
+	}
+	wantProbability := 4.4813777157991800
+
+	drawProbability := 10.0
+	draw := true
+
+	ts, err := NewWithDefaults(drawProbability)
+	if err != nil {
+		t.Error(err)
+	}
+
+	players := Players{ts.NewPlayerWithDefaults(), ts.NewPlayerWithDefaults()}
+
+	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
+
+	testPlayerSkills(t, newPlayerSkills, wantSkill)
+	testProbability(t, probability, wantProbability)
+}
+
+func TestTrueSkill_HeadToHead_NoDrawProbability(t *testing.T) {
+	wantSkill := []float64{
+		29.2054731068140000, 7.1948165514807000,
+		20.7945268931860000, 7.1948165514807000,
+	}
+	wantProbability := 50.0000008292022000
+
+	drawProbability := 0.0
+	draw := false
+
+	ts, err := NewWithDefaults(drawProbability)
+	if err != nil {
+		t.Error(err)
+	}
+
+	players := Players{ts.NewPlayerWithDefaults(), ts.NewPlayerWithDefaults()}
+
+	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
+
+	testPlayerSkills(t, newPlayerSkills, wantSkill)
+	testProbability(t, probability, wantProbability)
+}
+
+func TestTrueSkill_HeadToHead_BetterPlayerWins(t *testing.T) {
+	wantSkill := []float64{
+		31.2295178021319000, 6.5230309127748200,
+		18.7704821978681000, 6.5230309127748200,
+	}
+	wantProbability := 75.3779324752223000
+
+	drawProbability := 10.0
+	draw := false
+
+	ts, err := NewWithDefaults(drawProbability)
+	if err != nil {
+		t.Error(err)
+	}
+
+	players := Players{NewPlayer(29.396, 7.171), NewPlayer(20.604, 7.171)}
+
+	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
+
+	testPlayerSkills(t, newPlayerSkills, wantSkill)
+	testProbability(t, probability, wantProbability)
+}
+
+func TestTrueSkill_HeadToHead_BetterPlayerLoses(t *testing.T) {
+	wantSkill := []float64{
+		26.6428086088974000, 6.0399862622030400,
+		23.3571913911026000, 6.0399862622030400,
+	}
+	wantProbability := 20.8198643622167000
+
+	drawProbability := 10.0
+	draw := false
+
+	ts, err := NewWithDefaults(drawProbability)
+	if err != nil {
+		t.Error(err)
+	}
+
+	players := Players{NewPlayer(20.604, 7.171), NewPlayer(29.396, 7.171)}
+
+	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
+
+	testPlayerSkills(t, newPlayerSkills, wantSkill)
+	testProbability(t, probability, wantProbability)
+}
+
+func TestTrueSkill_4PFreeForAll(t *testing.T) {
+	wantSkill := []float64{
+		33.2066809656313000, 6.3481091698077100,
+		27.4014546938433000, 5.7871629348447600,
+		22.5985453061884000, 5.7871629348413500,
+		16.7933190343613000, 6.3481091698145000,
+	}
+	wantProbability := 3.1576468103466900
+
+	drawProbability := 10.0
+	draw := false
+	ts, err := NewWithDefaults(drawProbability)
+	if err != nil {
+		t.Error(err)
+	}
+
+	players := Players{ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults()}
+
+	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
+
+	testPlayerSkills(t, newPlayerSkills, wantSkill)
+	testProbability(t, probability, wantProbability)
+}
+
+func TestTrueSkill_8PFreeForAll(t *testing.T) {
+	wantSkill := []float64{
+		36.7710964365458000, 5.7492832446709400,
+		32.2423455786852000, 5.1329106221072500,
+		29.0739837977166000, 4.9427131496384800,
+		26.3221792432643000, 4.8745473884181200,
+		23.6778207568207000, 4.8745473884091200,
+		20.9260162023759000, 4.9427131496114100,
+		17.7576544214189000, 5.1329106220642000,
+		13.2289035635009000, 5.7492832447392400,
+	}
+	wantProbability := 0.0006565500448901
+
+	drawProbability := 10.0
+	draw := false
+	ts, err := NewWithDefaults(drawProbability)
+	if err != nil {
+		t.Error(err)
+	}
+
+	players := Players{ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults(),
+		ts.NewPlayerWithDefaults()}
+
+	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
+
+	testPlayerSkills(t, newPlayerSkills, wantSkill)
+	testProbability(t, probability, wantProbability)
+}
+
+func TestTrueSkill_MatchQuality_HeadToHead(t *testing.T) {
+	wantMatchQuality := 44.7
+
+	drawProbability := 10.0
+	ts, err := NewWithDefaults(drawProbability)
+	if err != nil {
+		t.Error(err)
+	}
+
+	players := Players{ts.NewPlayerWithDefaults(), ts.NewPlayerWithDefaults()}
+
+	matchQuality, err := ts.MatchQuality(players)
+	if err != nil {
+		t.Error(err)
+	}
+
+	matchQuality = matchQuality * 100
+	if !mathextra.Float64AlmostEq(matchQuality, wantMatchQuality, 1e-1) {
+		t.Errorf("Probability == %.1f, want %.1f", matchQuality, wantMatchQuality)
+	}
+}
