@@ -1,10 +1,10 @@
 # trueskill
 
-This library implements the [TrueSkill™](http://research.microsoft.com/en-us/projects/trueskill/) (by Microsoft) ranking system for Go.
+This library implements the [TrueSkill™](http://research.microsoft.com/en-us/projects/trueskill/) ranking system (by Microsoft) in Go.
 
 ## Todo
 
-* Add support for teams
+* Support team-based ranking
 
 ## Acknowledgements
 
