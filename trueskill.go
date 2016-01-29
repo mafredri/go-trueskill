@@ -54,7 +54,7 @@ func (ts Config) AdjustSkills(players Players, draw bool) (Players, float64) {
 		draws = append(draws, draw)
 	}
 
-	// TODO: Rewrite distribution bag
+	// TODO: Rewrite the distribution bag and simplify the factor list as well
 	prior := gaussian.NewFromPrecision(0, 0)
 	varBag := collection.NewDistributionBag(prior)
 

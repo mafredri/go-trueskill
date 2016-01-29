@@ -55,7 +55,7 @@ func buildSkillFactors(ts Config, players Players, draws []bool, varBag collecti
 		factorList.Add(gws)
 	}
 
-	// TODO: Calculate e separately for each
+	// TODO: Calculate e (epsilon) separately for each
 	epsilon := drawMargin(ts.Beta, ts.DrawProb)
 	for i, draw := range draws {
 		var f factor.Factor

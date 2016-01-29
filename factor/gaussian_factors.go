@@ -3,16 +3,16 @@ package factor
 import (
 	"math"
 
-	"github.com/mafredri/go-trueskill/collection"
 	"github.com/mafredri/go-gaussian"
+	"github.com/mafredri/go-trueskill/collection"
 )
 
-// GaussianFactors .
+// GaussianFactors is used to perform all skill related gaussian operations and turning them into factors capable of updating the factor graph.
 type GaussianFactors struct {
 	msgBag collection.DistributionBag
 }
 
-// NewGaussianFactors .
+// NewGaussianFactors initializes a gaussian factor with a distribution bag and returns it.
 func NewGaussianFactors() GaussianFactors {
 	prior := gaussian.NewFromPrecision(0, 0)
 	return GaussianFactors{
@@ -29,7 +29,7 @@ func sendMessageHelper(msgIdx, varIdx int, msgBag, varBag collection.Distributio
 	return gaussian.LogProdNorm(mar, msg)
 }
 
-// GaussianPrior .
+// GaussianPrior calculates the prior for the factor graph.
 func (gf GaussianFactors) GaussianPrior(mu, sigmaSquared float64, varIdx int,
 	varBag collection.DistributionBag) Factor {
 	msgIdx := gf.msgBag.NextIndex()
@@ -67,7 +67,7 @@ func (gf GaussianFactors) GaussianPrior(mu, sigmaSquared float64, varIdx int,
 	}
 }
 
-// GaussianLikeliehood .
+// GaussianLikeliehood calculates the likeliehood for the factor graph.
 func (gf GaussianFactors) GaussianLikeliehood(betaSquared float64, varIdx1, varIdx2 int, varBag1, varBag2 collection.DistributionBag) Factor {
 	msgIdx1 := gf.msgBag.NextIndex()
 	msgIdx2 := gf.msgBag.NextIndex()
@@ -130,7 +130,7 @@ func (gf GaussianFactors) GaussianLikeliehood(betaSquared float64, varIdx1, varI
 	}
 }
 
-// GaussianWeightedSum .
+// GaussianWeightedSum calculates the weighted sum for the facor graph.
 func (gf GaussianFactors) GaussianWeightedSum(a1, a2 float64, varIdx0, varIdx1, varIdx2 int,
 	varBag0, varBag1, varBag2 collection.DistributionBag) Factor {
 
@@ -230,7 +230,7 @@ func gaussianGreaterThanOrWithinUpdateMessage(epsilon float64, msgIdx, varIdx in
 	return newMarginal.Sub(oldMarginal)
 }
 
-// GaussianGreaterThan .
+// GaussianGreaterThan calculates the greater than margin for the factor graph.
 func (gf GaussianFactors) GaussianGreaterThan(epsilon float64, varIdx int, varBag collection.DistributionBag) Factor {
 	msgIdx := gf.msgBag.NextIndex()
 
@@ -266,7 +266,7 @@ func (gf GaussianFactors) GaussianGreaterThan(epsilon float64, varIdx int, varBa
 	}
 }
 
-// GaussianWithin .
+// GaussianWithin calculates the within margin for the factor graph.
 func (gf GaussianFactors) GaussianWithin(epsilon float64, varIdx int, varBag collection.DistributionBag) Factor {
 	msgIdx := gf.msgBag.NextIndex()
 

@@ -6,9 +6,8 @@ import (
 	"github.com/mafredri/go-mathextra"
 )
 
-// Test values taken from Ralf Herbrich's F# TrueSkill implementation
-
 func TestVGreaterThan(t *testing.T) {
+	// Test values taken from Ralf Herbrich's F# TrueSkill implementation
 	want := 0.4181660649773850
 	tVar := 0.7495591915280050
 	eps := 0.0631282276750071
@@ -20,6 +19,7 @@ func TestVGreaterThan(t *testing.T) {
 }
 
 func TestWGreaterThan(t *testing.T) {
+	// Test values taken from Ralf Herbrich's F# TrueSkill implementation
 	want := 0.4619049929317120
 	tVar := 0.7495591915280050
 	eps := 0.0631282276750071
@@ -31,6 +31,7 @@ func TestWGreaterThan(t *testing.T) {
 }
 
 func TestVWithin(t *testing.T) {
+	// Test values taken from Ralf Herbrich's F# TrueSkill implementation
 	want := -0.7485644072749330
 	tVar := 0.7495591915280050
 	eps := 0.0631282276750071
@@ -42,6 +43,7 @@ func TestVWithin(t *testing.T) {
 }
 
 func TestWWithin(t *testing.T) {
+	// Test values taken from Ralf Herbrich's F# TrueSkill implementation
 	want := 0.9986734210033660
 	tVar := 0.7495591915280050
 	eps := 0.0631282276750071
