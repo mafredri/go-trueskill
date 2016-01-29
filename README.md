@@ -2,9 +2,10 @@
 
 This library implements the [TrueSkill™](http://research.microsoft.com/en-us/projects/trueskill/) ranking system (by Microsoft) in Go.
 
-## Todo
+## TODO
 
-* Support team-based ranking
+* Refactor the factor graph to remove the need for the distribution bag (collection)
+* Support teams and team-based ranking
 
 ## Acknowledgements
 
