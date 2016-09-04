@@ -84,21 +84,23 @@ func skillFactorListToScheduleStep(facs []factor.Factor, idx int) []sched.Runnab
 // buildSkillFactorSchedule builds a full schedule that represents all the steps
 // in a factor graph.
 func buildSkillFactorSchedule(numPlayers int, sf skillFactors, loopMaxDelta float64) sched.RunnableSchedule {
-	// Prior schedule initializes the skill priors for all players and updates the performance
-	priorSchedule := sched.NewSequence([]sched.RunnableSchedule{
-		sched.NewSequence(skillFactorListToScheduleStep(sf.skillPriorFactors, 0)),
-		sched.NewSequence(skillFactorListToScheduleStep(sf.skillToPerformanceFactors, 0)),
-	})
+	// Prior schedule initializes the skill priors for all players and updates
+	// the performance
+	priorSchedule := sched.NewSequence(
+		sched.NewSequence(skillFactorListToScheduleStep(sf.skillPriorFactors, 0)...),
+		sched.NewSequence(skillFactorListToScheduleStep(sf.skillToPerformanceFactors, 0)...),
+	)
 
 	// Loop schedule iterates until desired accuracy is reached
 	var loopSchedule sched.RunnableSchedule
 
 	if numPlayers == 2 {
-		// In two player mode there is no to loop, just send the performance difference and the greater-than
-		loopSchedule = sched.NewSequence([]sched.RunnableSchedule{
+		// In two player mode there is no loop, just send the performance
+		// difference and the greater-than.
+		loopSchedule = sched.NewSequence(
 			sched.NewStep(sf.performanceToPerformanceDifferencFactors[0].UpdateMessage, 0),
 			sched.NewStep(sf.greatherThanOrWithinFactors[0].UpdateMessage, 0),
-		})
+		)
 	} else {
 		// Forward schedule updates the factor graph in one direction
 		forwardSchedule := []sched.RunnableSchedule{}
@@ -121,29 +123,29 @@ func buildSkillFactorSchedule(numPlayers int, sf skillFactors, loopMaxDelta floa
 			backwardSchedule = append(backwardSchedule, backwardSteps...)
 		}
 
-		// Combine the backward and forward schedule so that they are run in said order
-		combinedForwardBackwardSchedule := sched.NewSequence([]sched.RunnableSchedule{
-			sched.NewSequence(forwardSchedule),
-			sched.NewSequence(backwardSchedule),
-		})
+		// Combine the backward and forward schedule so that they are run in
+		// said order
+		combinedForwardBackwardSchedule := sched.NewSequence(
+			sched.NewSequence(forwardSchedule...),
+			sched.NewSequence(backwardSchedule...),
+		)
 
-		// Loop through the forward and backward schedule until the delta stops changing by more than loopMaxDelta
+		// Loop through the forward and backward schedule until the delta stops
+		// changing by more than loopMaxDelta
 		loopSchedule = sched.NewLoop(combinedForwardBackwardSchedule, loopMaxDelta)
 	}
 
-	innerSchedule := sched.NewSequence([]sched.RunnableSchedule{
+	innerSchedule := sched.NewSequence(
 		loopSchedule,
 		sched.NewStep(sf.performanceToPerformanceDifferencFactors[0].UpdateMessage, 1),
 		sched.NewStep(sf.performanceToPerformanceDifferencFactors[numPlayers-2].UpdateMessage, 2),
-	})
+	)
 
 	// Finally send the skill performances of all players
-	posteriorSchedule := sched.NewSequence(skillFactorListToScheduleStep(sf.skillToPerformanceFactors, 1))
+	posteriorSchedule := sched.NewSequence(skillFactorListToScheduleStep(sf.skillToPerformanceFactors, 1)...)
 
 	// Combine all schedules into one runnable sequence
-	fullSchedule := sched.NewSequence([]sched.RunnableSchedule{
-		priorSchedule, innerSchedule, posteriorSchedule,
-	})
+	fullSchedule := sched.NewSequence(priorSchedule, innerSchedule, posteriorSchedule)
 
 	return fullSchedule
 }

@@ -24,12 +24,11 @@ func TestScheduleSequenceRun(t *testing.T) {
 	simpleStepFunc := func(i int) float64 {
 		return float64(i) + 0.5
 	}
-	sequences := []RunnableSchedule{
+	seq := NewSequence(
 		NewStep(simpleStepFunc, 1),
 		NewStep(simpleStepFunc, 2),
 		NewStep(simpleStepFunc, 0),
-	}
-	seq := NewSequence(sequences)
+	)
 
 	result := seq.Run(0, -1)
 	want := 2.5
@@ -47,12 +46,11 @@ func TestScheduleLoopRun(t *testing.T) {
 		iter++
 		return delta
 	}
-	sequences := []RunnableSchedule{
+	seq := NewSequence(
 		NewStep(simpleStepReduceFunc, 1),
 		NewStep(simpleStepReduceFunc, 1),
 		NewStep(simpleStepReduceFunc, 1),
-	}
-	seq := NewSequence(sequences)
+	)
 
 	loop := NewLoop(seq, 0)
 
@@ -80,15 +78,11 @@ func TestRunSchedule(t *testing.T) {
 	simpleStepFunc := func(i int) float64 {
 		return float64(i)
 	}
-	sequence := NewSequence([]RunnableSchedule{
-		NewSequence([]RunnableSchedule{
-			NewStep(simpleStepFunc, -1),
-		}),
-		NewSequence([]RunnableSchedule{
-			NewStep(simpleStepFunc, -2),
-		}),
+	sequence := NewSequence(
+		NewSequence(NewStep(simpleStepFunc, -1)),
+		NewSequence(NewStep(simpleStepFunc, -2)),
 		NewLoop(NewStep(simpleStepReduceFunc, 1), 0),
-	})
+	)
 
 	result := Run(sequence, -1)
 	wantResult := 0.0
