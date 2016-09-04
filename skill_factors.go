@@ -81,7 +81,8 @@ func skillFactorListToScheduleStep(facs []factor.Factor, idx int) []sched.Runnab
 	return steps
 }
 
-// buildSkillFactorSchedule builds a full schedule that represents all the steps in a factor graph.
+// buildSkillFactorSchedule builds a full schedule that represents all the steps
+// in a factor graph.
 func buildSkillFactorSchedule(numPlayers int, sf skillFactors, loopMaxDelta float64) sched.RunnableSchedule {
 	// Prior schedule initializes the skill priors for all players and updates the performance
 	priorSchedule := sched.NewSequence([]sched.RunnableSchedule{

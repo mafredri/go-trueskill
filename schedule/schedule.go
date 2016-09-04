@@ -1,4 +1,5 @@
-// Package schedule provides a scheduler capable of scheduling functions to be run in sequences and loops.
+// Package schedule provides a scheduler capable of scheduling functions to be
+// run in sequences and loops.
 package schedule
 
 import "math"
@@ -34,11 +35,12 @@ type sequence struct {
 }
 
 // NewSequence returns a new sequence of runnable schedules.
-func NewSequence(sequences []RunnableSchedule) RunnableSchedule {
+func NewSequence(sequences ...RunnableSchedule) RunnableSchedule {
 	return sequence{sequences}
 }
 
-// Run runs all runnable schedules in a sequence. The largest delta from any of the runnable schedules is returned.
+// Run runs all runnable schedules in a sequence. The largest delta from any of
+// the runnable schedules is returned.
 func (s sequence) Run(depth, maxDepth int) float64 {
 	var delta float64
 	for _, s := range s.sequences {

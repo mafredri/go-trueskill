@@ -9,7 +9,8 @@ type Factor struct {
 	SendMessage      func(i int) float64
 }
 
-// List is a list of all factors, used to get the log normalization for the factor graph.
+// List is a list of all factors, used to get the log normalization for the
+// factor graph.
 type List struct {
 	list []Factor
 }
@@ -25,7 +26,8 @@ func (fl *List) Add(f Factor) Factor {
 	return f
 }
 
-// LogNormalization returns the log normalization of all factors in the factor graph.
+// LogNormalization returns the log normalization of all factors in the factor
+// graph.
 func (fl List) LogNormalization() float64 {
 	for _, f := range fl.list {
 		f.ResetMarginals()

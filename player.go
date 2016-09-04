@@ -8,7 +8,8 @@ type Player struct {
 	gaussian.Gaussian
 }
 
-// NewPlayer returns a player from the provided mu (mean) and sigma (standard deviation).
+// NewPlayer returns a player from the provided mu (mean) and sigma (standard
+// deviation).
 func NewPlayer(mu, sigma float64) Player {
 	return Player{
 		Gaussian: gaussian.NewFromMeanAndStdDev(mu, sigma),

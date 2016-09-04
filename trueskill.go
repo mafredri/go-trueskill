@@ -1,4 +1,5 @@
-// Package trueskill implements the TrueSkill™ ranking system (by Microsoft) in Go.
+// Package trueskill implements the TrueSkill™ ranking system (by Microsoft) in
+// Go.
 package trueskill
 
 import (
@@ -38,13 +39,14 @@ func New(mu, sigma, beta, tau, drawProbPercentage float64) (Config, error) {
 	return Config{mu, sigma, beta, tau, drawProbPercentage / 100}, nil
 }
 
-// NewDefault returns a new game configuration with the default TrueSkill configuration.
+// NewDefault returns a new game configuration with the default TrueSkill
+// configuration.
 func NewDefault(drawProbPercentage float64) (Config, error) {
 	return New(DefaultMu, DefaultSigma, DefaultBeta, DefaultTau, drawProbPercentage)
 }
 
-// AdjustSkills returns the new skill level distribution for all provided players based on game configuration and draw
-// status.
+// AdjustSkills returns the new skill level distribution for all provided
+// players based on game configuration and draw status.
 func (ts Config) AdjustSkills(players Players, draw bool) (Players, float64) {
 	// Sort players
 	// sort.Sort(players)
@@ -76,9 +78,11 @@ func (ts Config) AdjustSkills(players Players, draw bool) (Players, float64) {
 	return newPlayerSkills, probability
 }
 
-// MatchQuality returns a float representing the quality of the match-up between players.
+// MatchQuality returns a float representing the quality of the match-up
+// between players.
 //
-// Only two player match quality is supported at this time. Minus one is returned if the match-up is unsupported.
+// Only two player match quality is supported at this time. Minus one is
+// returned if the match-up is unsupported.
 func (ts Config) MatchQuality(players Players) float64 {
 	if players.Len() > 2 {
 		return -1
@@ -87,13 +91,15 @@ func (ts Config) MatchQuality(players Players) float64 {
 	return calculate2PlayerMatchQuality(ts, players[0], players[1])
 }
 
-// NewDefaultPlayer returns a new player with the mu and sigma from the game configuration.
+// NewDefaultPlayer returns a new player with the mu and sigma from the game
+// configuration.
 func (ts Config) NewDefaultPlayer() Player {
 	return NewPlayer(ts.Mu, ts.Sigma)
 }
 
-// TrueSkill returns the conservative TrueSkill of a player. The maximum TrueSkill is two times mu, in the default
-// configuration a value between zero and fifty is returned.
+// TrueSkill returns the conservative TrueSkill of a player. The maximum
+// TrueSkill is two times mu, in the default configuration a value between
+// zero and fifty is returned.
 func (ts Config) TrueSkill(p Player) float64 {
 	trueSkill := p.Mu() - p.Sigma()*3
 

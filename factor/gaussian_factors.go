@@ -7,12 +7,14 @@ import (
 	"github.com/mafredri/go-trueskill/collection"
 )
 
-// GaussianFactors is used to perform all skill related gaussian operations and turning them into factors capable of updating the factor graph.
+// GaussianFactors is used to perform all skill related gaussian operations and
+// turning them into factors capable of updating the factor graph.
 type GaussianFactors struct {
 	msgBag collection.DistributionBag
 }
 
-// NewGaussianFactors initializes a gaussian factor with a distribution bag and returns it.
+// NewGaussianFactors initializes a gaussian factor with a distribution bag and
+// returns it.
 func NewGaussianFactors() GaussianFactors {
 	prior := gaussian.NewFromPrecision(0, 0)
 	return GaussianFactors{

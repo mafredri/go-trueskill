@@ -6,7 +6,8 @@ import (
 	"github.com/mafredri/go-gaussian"
 )
 
-// VGreaterThan returns the additive correction for a single-sided truncated gaussian with unit variance.
+// VGreaterThan returns the additive correction for a single-sided truncated
+// gaussian with unit variance.
 func VGreaterThan(t, epsilon float64) float64 {
 	denom := gaussian.NormCdf(t - epsilon)
 	if denom < 2.222758749e-162 {
@@ -16,7 +17,8 @@ func VGreaterThan(t, epsilon float64) float64 {
 	return gaussian.NormPdf(t-epsilon) / denom
 }
 
-// WGreaterThan returns the multiplicative correction for a single-sided truncated gaussian with unit variance.
+// WGreaterThan returns the multiplicative correction for a single-sided
+// truncated gaussian with unit variance.
 func WGreaterThan(t, epsilon float64) float64 {
 	var denom = gaussian.NormCdf(t - epsilon)
 	if denom < 2.222758749e-162 {
@@ -30,7 +32,8 @@ func WGreaterThan(t, epsilon float64) float64 {
 	return vt * (vt + t - epsilon)
 }
 
-// VWithin returns the additive correction for a double-sided truncated gaussian with unit variance.
+// VWithin returns the additive correction for a double-sided truncated gaussian
+// with unit variance.
 func VWithin(t, epsilon float64) float64 {
 	v := math.Abs(t)
 	denom := gaussian.NormCdf(epsilon-v) - gaussian.NormCdf(-epsilon-v)
@@ -48,7 +51,8 @@ func VWithin(t, epsilon float64) float64 {
 	return num / denom
 }
 
-// WWithin returns the multiplicative correction for a double-sided truncated gaussian with unit variance.
+// WWithin returns the multiplicative correction for a double-sided truncated
+// gaussian with unit variance.
 func WWithin(t, epsilon float64) float64 {
 	v := math.Abs(t)
 	denom := gaussian.NormCdf(epsilon-v) - gaussian.NormCdf(-epsilon-v)
