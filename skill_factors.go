@@ -15,7 +15,7 @@ type skillFactors struct {
 	greatherThanOrWithinFactors              []factor.Factor
 }
 
-func buildSkillFactors(ts Config, players Players, draws []bool, varBag collection.DistributionBag) (skillFactors, []int, factor.List) {
+func buildSkillFactors(ts Config, players Players, draws []bool, varBag *collection.DistributionBag) (skillFactors, []int, factor.List) {
 	sf := skillFactors{}
 	gf := factor.NewGaussianFactors()
 	factorList := factor.NewList()
