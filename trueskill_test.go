@@ -8,6 +8,18 @@ import (
 
 const epsilon = 1e-5 // Precision for floating point comparison
 
+func TestNewDefault(t *testing.T) {
+	_, err := NewDefault(0)
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = NewDefault(200)
+	if err == nil {
+		t.Errorf("got no error, want %q", errDrawProbabilityOutOfRange)
+	}
+}
+
 func testPlayerSkills(t *testing.T, playerSkills Players, wantSkill []float64) {
 	for i, p := range playerSkills {
 		if !mathextra.Float64AlmostEq(p.Mu(), wantSkill[i*2], epsilon) {
@@ -221,5 +233,30 @@ func TestTrueSkill_MatchQuality_HeadToHead(t *testing.T) {
 	matchQuality = matchQuality * 100
 	if !mathextra.Float64AlmostEq(matchQuality, wantMatchQuality, 1e-1) {
 		t.Errorf("Probability == %.1f, want %.1f", matchQuality, wantMatchQuality)
+	}
+
+	players = append(players, ts.NewDefaultPlayer())
+	matchQuality = ts.MatchQuality(players)
+	if matchQuality != -1 {
+		t.Errorf("bad match quality for >2 players; got %v, want %v", matchQuality, -1)
+	}
+}
+
+func TestTrueSkillForPlayer(t *testing.T) {
+	ts, err := NewDefault(0)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	player := ts.NewDefaultPlayer()
+	skill := ts.TrueSkill(player)
+	if skill != 0 {
+		t.Errorf("wrong trueskill for new player; got %v, want %v", skill, 0)
+	}
+
+	player = NewPlayer(30, 1)
+	skill = ts.TrueSkill(player)
+	if skill != 27 {
+		t.Errorf("wrong trueskill for new player; got %v, want %v", skill, 27)
 	}
 }

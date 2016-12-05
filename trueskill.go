@@ -31,10 +31,14 @@ type Config struct {
 	DrawProb float64 // Probability of a draw, between zero and a one
 }
 
+var (
+	errDrawProbabilityOutOfRange = errors.New("draw probability must be between 0 and 100")
+)
+
 // New creates a new TrueSkill configuration from the provided values
 func New(mu, sigma, beta, tau, drawProbPercentage float64) (Config, error) {
 	if drawProbPercentage < 0.0 || drawProbPercentage > 100.0 {
-		return Config{}, errors.New("Draw probability must be between 0 and 100.")
+		return Config{}, errDrawProbabilityOutOfRange
 	}
 	return Config{mu, sigma, beta, tau, drawProbPercentage / 100}, nil
 }
