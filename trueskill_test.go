@@ -8,18 +8,6 @@ import (
 
 const epsilon = 1e-5 // Precision for floating point comparison
 
-func TestNewDefault(t *testing.T) {
-	_, err := NewDefault(0)
-	if err != nil {
-		t.Error(err)
-	}
-
-	_, err = NewDefault(200)
-	if err == nil {
-		t.Errorf("got no error, want %q", errDrawProbabilityOutOfRange)
-	}
-}
-
 func testPlayerSkills(t *testing.T, playerSkills []Player, wantSkill []float64) {
 	for i, p := range playerSkills {
 		if !mathextra.Float64AlmostEq(p.Mu(), wantSkill[i*2], epsilon) {
@@ -45,17 +33,12 @@ func TestTrueSkill_HeadToHead(t *testing.T) {
 	}
 	wantProbability := 47.7593111421005000
 
-	drawProbability := 10.0
 	draw := false
-	ts, err := NewDefault(drawProbability)
-	if err != nil {
-		t.Error(err)
-	}
+	ts := New()
 
 	players := []Player{ts.NewDefaultPlayer(), ts.NewDefaultPlayer()}
 
 	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
-	t.Log(newPlayerSkills)
 
 	testPlayerSkills(t, newPlayerSkills, wantSkill)
 	testProbability(t, probability, wantProbability)
@@ -68,13 +51,8 @@ func TestTrueSkill_HeadToHead_Draw(t *testing.T) {
 	}
 	wantProbability := 4.4813777157991800
 
-	drawProbability := 10.0
 	draw := true
-
-	ts, err := NewDefault(drawProbability)
-	if err != nil {
-		t.Error(err)
-	}
+	ts := New()
 
 	players := []Player{ts.NewDefaultPlayer(), ts.NewDefaultPlayer()}
 
@@ -91,13 +69,13 @@ func TestTrueSkill_HeadToHead_NoDrawProbability(t *testing.T) {
 	}
 	wantProbability := 50.0000008292022000
 
-	drawProbability := 0.0
-	draw := false
-
-	ts, err := NewDefault(drawProbability)
+	drawProbability, err := DrawProbability(0.0)
 	if err != nil {
 		t.Error(err)
 	}
+	draw := false
+
+	ts := New(drawProbability)
 
 	players := []Player{ts.NewDefaultPlayer(), ts.NewDefaultPlayer()}
 
@@ -114,13 +92,13 @@ func TestTrueSkill_HeadToHead_BetterPlayerWins(t *testing.T) {
 	}
 	wantProbability := 75.3779324752223000
 
-	drawProbability := 10.0
-	draw := false
-
-	ts, err := NewDefault(drawProbability)
+	drawProbability, err := DrawProbability(10.0)
 	if err != nil {
 		t.Error(err)
 	}
+	draw := false
+
+	ts := New(drawProbability)
 
 	players := []Player{NewPlayer(29.396, 7.171), NewPlayer(20.604, 7.171)}
 
@@ -137,13 +115,13 @@ func TestTrueSkill_HeadToHead_BetterPlayerLoses(t *testing.T) {
 	}
 	wantProbability := 20.8198643622167000
 
-	drawProbability := 10.0
-	draw := false
-
-	ts, err := NewDefault(drawProbability)
+	drawProbability, err := DrawProbability(10.0)
 	if err != nil {
 		t.Error(err)
 	}
+	draw := false
+
+	ts := New(drawProbability)
 
 	players := []Player{NewPlayer(20.604, 7.171), NewPlayer(29.396, 7.171)}
 
@@ -162,12 +140,13 @@ func TestTrueSkill_4PFreeForAll(t *testing.T) {
 	}
 	wantProbability := 3.1576468103466900
 
-	drawProbability := 10.0
-	draw := false
-	ts, err := NewDefault(drawProbability)
+	drawProbability, err := DrawProbability(10.0)
 	if err != nil {
 		t.Error(err)
 	}
+	draw := false
+
+	ts := New(drawProbability)
 
 	players := []Player{ts.NewDefaultPlayer(),
 		ts.NewDefaultPlayer(),
@@ -193,12 +172,13 @@ func TestTrueSkill_8PFreeForAll(t *testing.T) {
 	}
 	wantProbability := 0.0006565500448901
 
-	drawProbability := 10.0
-	draw := false
-	ts, err := NewDefault(drawProbability)
+	drawProbability, err := DrawProbability(10.0)
 	if err != nil {
 		t.Error(err)
 	}
+	draw := false
+
+	ts := New(drawProbability)
 
 	players := []Player{ts.NewDefaultPlayer(),
 		ts.NewDefaultPlayer(),
@@ -218,11 +198,7 @@ func TestTrueSkill_8PFreeForAll(t *testing.T) {
 func TestTrueSkill_MatchQuality_HeadToHead(t *testing.T) {
 	wantMatchQuality := 44.7
 
-	drawProbability := 10.0
-	ts, err := NewDefault(drawProbability)
-	if err != nil {
-		t.Error(err)
-	}
+	ts := New()
 
 	players := []Player{ts.NewDefaultPlayer(), ts.NewDefaultPlayer()}
 
@@ -244,10 +220,7 @@ func TestTrueSkill_MatchQuality_HeadToHead(t *testing.T) {
 }
 
 func TestTrueSkillForPlayer(t *testing.T) {
-	ts, err := NewDefault(0)
-	if err != nil {
-		t.Fatal(err)
-	}
+	ts := New(DrawProbabilityZero)
 
 	player := ts.NewDefaultPlayer()
 	skill := ts.TrueSkill(player)

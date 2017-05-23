@@ -14,11 +14,11 @@ import (
 
 // Constants for the TrueSkill ranking system.
 const (
-	DefaultMu                 = 25.0
-	DefaultSigma              = DefaultMu / 3.0
-	DefaultBeta               = DefaultSigma * 0.5
-	DefaultTau                = DefaultSigma * 0.01
-	DefaultDrawProbPercentage = 10.0
+	DefaultMu              = 25.0
+	DefaultSigma           = DefaultMu / 3.0
+	DefaultBeta            = DefaultSigma * 0.5
+	DefaultTau             = DefaultSigma * 0.01
+	DefaultDrawProbability = 10.0 // Percentage, between 0 and 100.
 
 	loopMaxDelta = 1e-4 // Desired accuracy for factor graph loop schedule
 )
@@ -40,23 +40,73 @@ var (
 	errDrawProbabilityOutOfRange = errors.New("draw probability must be between 0 and 100")
 )
 
-// New creates a new TrueSkill configuration from the provided values
-func New(mu, sigma, beta, tau, drawProbPercentage float64) (Config, error) {
-	if drawProbPercentage < 0.0 || drawProbPercentage > 100.0 {
-		return Config{}, errDrawProbabilityOutOfRange
+// Option represents a configuration option for TrueSkill.
+type Option func(c *Config)
+
+// Mu sets the mean for TrueSkill.
+func Mu(mu float64) Option {
+	return func(c *Config) {
+		c.Mu = mu
 	}
-	return Config{mu, sigma, beta, tau, drawProbPercentage / 100}, nil
 }
 
-// NewDefault returns a new game configuration with the default TrueSkill
-// configuration.
-func NewDefault(drawProbPercentage float64) (Config, error) {
-	return New(DefaultMu, DefaultSigma, DefaultBeta, DefaultTau, drawProbPercentage)
+// Sigma sets the standard deviation for TrueSkill.
+func Sigma(sigma float64) Option {
+	return func(c *Config) {
+		c.Sigma = sigma
+	}
+}
+
+// Beta sets the skill class width for TrueSkill.
+func Beta(beta float64) Option {
+	return func(c *Config) {
+		c.Beta = beta
+	}
+}
+
+// Tau sets the additive dynamics factor for TrueSkill.
+func Tau(tau float64) Option {
+	return func(c *Config) {
+		c.Tau = tau
+	}
+}
+
+// DrawProbability takes a value between 0 and 100 and returns an Option that
+// sets the probability of a draw. An error is returned if the input value is
+// out of range.
+func DrawProbability(prob float64) (Option, error) {
+	if prob < 0.0 || prob > 100.0 {
+		return nil, errDrawProbabilityOutOfRange
+	}
+	return func(c *Config) {
+		c.DrawProb = prob / 100
+	}, nil
+}
+
+// DrawProbabilityZero is an Option that sets the draw probability to
+// zero. It exists as a convenience function.
+func DrawProbabilityZero(c *Config) {
+	c.DrawProb = 0
+}
+
+// New creates a new TrueSkill configuration with default values, unless
+func New(opts ...Option) Config {
+	c := Config{
+		Mu:       DefaultMu,
+		Sigma:    DefaultSigma,
+		Beta:     DefaultBeta,
+		Tau:      DefaultTau,
+		DrawProb: DefaultDrawProbability / 100, // Percentage, between 0 and 100.
+	}
+	for _, o := range opts {
+		o(&c)
+	}
+	return c
 }
 
 // AdjustSkills returns the new skill level distribution for all provided
 // players based on game configuration and draw status.
-func (ts Config) AdjustSkills(players []Player, draw bool) ([]Player, float64) {
+func (ts Config) AdjustSkills(players []Player, draw bool) (newSkills []Player, probability float64) {
 	draws := []bool{}
 	for i := 0; i < len(players)-1; i++ {
 		draws = append(draws, draw)
@@ -74,14 +124,13 @@ func (ts Config) AdjustSkills(players []Player, draw bool) ([]Player, float64) {
 	_ = schedule.Run(sched, -1)
 
 	logZ := factorList.LogNormalization()
-	probability := math.Exp(logZ)
+	probability = math.Exp(logZ)
 
-	newPlayerSkills := []Player{}
 	for _, id := range skillIndex {
-		newPlayerSkills = append(newPlayerSkills, Player{Gaussian: varBag.Get(id)})
+		newSkills = append(newSkills, Player{Gaussian: varBag.Get(id)})
 	}
 
-	return newPlayerSkills, probability
+	return newSkills, probability
 }
 
 // MatchQuality returns a float representing the quality of the match-up
