@@ -51,12 +51,9 @@ func NewDefault(drawProbPercentage float64) (Config, error) {
 
 // AdjustSkills returns the new skill level distribution for all provided
 // players based on game configuration and draw status.
-func (ts Config) AdjustSkills(players Players, draw bool) (Players, float64) {
-	// Sort players
-	// sort.Sort(players)
-
+func (ts Config) AdjustSkills(players []Player, draw bool) ([]Player, float64) {
 	draws := []bool{}
-	for i := 0; i < players.Len()-1; i++ {
+	for i := 0; i < len(players)-1; i++ {
 		draws = append(draws, draw)
 	}
 
@@ -66,7 +63,7 @@ func (ts Config) AdjustSkills(players Players, draw bool) (Players, float64) {
 
 	skillFactors, skillIndex, factorList := buildSkillFactors(ts, players, draws, varBag)
 
-	sched := buildSkillFactorSchedule(players.Len(), skillFactors, loopMaxDelta)
+	sched := buildSkillFactorSchedule(len(players), skillFactors, loopMaxDelta)
 
 	// delta
 	_ = schedule.Run(sched, -1)
@@ -74,7 +71,7 @@ func (ts Config) AdjustSkills(players Players, draw bool) (Players, float64) {
 	logZ := factorList.LogNormalization()
 	probability := math.Exp(logZ)
 
-	newPlayerSkills := Players{}
+	newPlayerSkills := []Player{}
 	for _, id := range skillIndex {
 		newPlayerSkills = append(newPlayerSkills, Player{Gaussian: varBag.Get(id)})
 	}
@@ -87,8 +84,8 @@ func (ts Config) AdjustSkills(players Players, draw bool) (Players, float64) {
 //
 // Only two player match quality is supported at this time. Minus one is
 // returned if the match-up is unsupported.
-func (ts Config) MatchQuality(players Players) float64 {
-	if players.Len() > 2 {
+func (ts Config) MatchQuality(players []Player) float64 {
+	if len(players) > 2 {
 		return -1
 	}
 
