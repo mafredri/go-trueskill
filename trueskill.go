@@ -4,6 +4,7 @@ package trueskill
 
 import (
 	"errors"
+	"fmt"
 	"math"
 
 	"github.com/mafredri/go-gaussian"
@@ -29,6 +30,10 @@ type Config struct {
 	Beta     float64 // Skill class width (length of skill chain)
 	Tau      float64 // Additive dynamics factor
 	DrawProb float64 // Probability of a draw, between zero and a one
+}
+
+func (ts Config) String() string {
+	return fmt.Sprintf("TrueSkill(mu=%.3f sigma=%.3f beta=%.3f tau=%.3f draw=%.1f%%)", ts.Mu, ts.Sigma, ts.Beta, ts.Tau, ts.DrawProb*100)
 }
 
 var (

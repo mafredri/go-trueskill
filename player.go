@@ -30,5 +30,5 @@ func (p Player) Sigma() float64 {
 }
 
 func (p Player) String() string {
-	return fmt.Sprintf("Player(mu=%.6f, sigma=%.6f)", p.Mu(), p.Sigma())
+	return fmt.Sprintf("Player(mu=%.3f sigma=%.3f)", p.Mu(), p.Sigma())
 }
