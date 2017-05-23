@@ -55,9 +55,11 @@ func buildSkillFactors(ts Config, players Players, draws []bool, varBag *collect
 		factorList.Add(gws)
 	}
 
-	// TODO: Calculate e (epsilon) separately for each
-	epsilon := drawMargin(ts.Beta, ts.DrawProb)
 	for i, draw := range draws {
+		// TODO: Change hard-coded 2 to len(teamA) + len(teamB)
+		// (when teams are supported).
+		epsilon := drawMargin(ts.Beta, ts.DrawProb, 2)
+
 		var f factor.Factor
 		if draw {
 			f = gf.GaussianWithin(epsilon, sf.playerPerformanceDifferences[i], varBag)
