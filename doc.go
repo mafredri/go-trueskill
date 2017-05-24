@@ -19,6 +19,21 @@ The TrueSkill algorithm can be tweaked with configuration options:
 		trueskill.Tau(0.666),
 		trueskill.DrawProbabilityZero)
 
+Adjust player skills:
+
+	ts := trueskill.New()
+	p1 := ts.NewPlayer()
+	p2 := ts.NewPlayer()
+	draw := false
+	newSkills, probability := ts.AdjustSkills([]Player{p1, p2}, draw)
+	p1 = newSkills[0]
+	p2 = newSkills[1]
+
+Check the conservative TrueSkill of a player:
+
+	ts := trueskill.New()
+	p1 := trueskill.NewPlayer(30, 1)
+	fmt.Println(ts.TrueSkill(p1)) // 27
 
 */
 package trueskill
