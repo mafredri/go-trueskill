@@ -1,5 +1,3 @@
-// Package trueskill implements the TrueSkill™ ranking system (by Microsoft) in
-// Go.
 package trueskill
 
 import (
