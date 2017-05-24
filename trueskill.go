@@ -25,49 +25,49 @@ const (
 
 // Config is the configuration for the TrueSkill ranking system
 type Config struct {
-	Mu       float64 // Mean
-	Sigma    float64 // Standard deviation
-	Beta     float64 // Skill class width (length of skill chain)
-	Tau      float64 // Additive dynamics factor
-	DrawProb float64 // Probability of a draw, between zero and a one
+	mu              float64 // Mean
+	sigma           float64 // Standard deviation
+	beta            float64 // Skill class width (length of skill chain)
+	tau             float64 // Additive dynamics factor
+	drawProbability float64 // Probability of a draw, between zero and a one
 }
 
 func (ts Config) String() string {
-	return fmt.Sprintf("TrueSkill(mu=%.3f sigma=%.3f beta=%.3f tau=%.3f draw=%.1f%%)", ts.Mu, ts.Sigma, ts.Beta, ts.Tau, ts.DrawProb*100)
+	return fmt.Sprintf("TrueSkill(mu=%.3f sigma=%.3f beta=%.3f tau=%.3f draw=%.1f%%)", ts.mu, ts.sigma, ts.beta, ts.tau, ts.drawProbability*100)
 }
 
 var (
 	errDrawProbabilityOutOfRange = errors.New("draw probability must be between 0 and 100")
 )
 
-// Option represents a configuration option for TrueSkill.
+// Option represents a configuration option.
 type Option func(c *Config)
 
-// Mu sets the mean for TrueSkill.
+// Mu sets the mean.
 func Mu(mu float64) Option {
 	return func(c *Config) {
-		c.Mu = mu
+		c.mu = mu
 	}
 }
 
-// Sigma sets the standard deviation for TrueSkill.
+// Sigma sets the standard deviation.
 func Sigma(sigma float64) Option {
 	return func(c *Config) {
-		c.Sigma = sigma
+		c.sigma = sigma
 	}
 }
 
-// Beta sets the skill class width for TrueSkill.
+// Beta sets the skill class width (length of skill chain).
 func Beta(beta float64) Option {
 	return func(c *Config) {
-		c.Beta = beta
+		c.beta = beta
 	}
 }
 
-// Tau sets the additive dynamics factor for TrueSkill.
+// Tau sets the additive dynamics factor.
 func Tau(tau float64) Option {
 	return func(c *Config) {
-		c.Tau = tau
+		c.tau = tau
 	}
 }
 
@@ -79,24 +79,24 @@ func DrawProbability(prob float64) (Option, error) {
 		return nil, errDrawProbabilityOutOfRange
 	}
 	return func(c *Config) {
-		c.DrawProb = prob / 100
+		c.drawProbability = prob / 100
 	}, nil
 }
 
 // DrawProbabilityZero is an Option that sets the draw probability to
 // zero. It exists as a convenience function.
 func DrawProbabilityZero(c *Config) {
-	c.DrawProb = 0
+	c.drawProbability = 0
 }
 
 // New creates a new TrueSkill configuration with default values, unless
 func New(opts ...Option) Config {
 	c := Config{
-		Mu:       DefaultMu,
-		Sigma:    DefaultSigma,
-		Beta:     DefaultBeta,
-		Tau:      DefaultTau,
-		DrawProb: DefaultDrawProbability / 100, // Percentage, between 0 and 100.
+		mu:              DefaultMu,
+		sigma:           DefaultSigma,
+		beta:            DefaultBeta,
+		tau:             DefaultTau,
+		drawProbability: DefaultDrawProbability / 100, // Percentage, between 0 and 100.
 	}
 	for _, o := range opts {
 		o(&c)
@@ -149,7 +149,7 @@ func (ts Config) MatchQuality(players []Player) float64 {
 // NewDefaultPlayer returns a new player with the mu and sigma from the game
 // configuration.
 func (ts Config) NewDefaultPlayer() Player {
-	return NewPlayer(ts.Mu, ts.Sigma)
+	return NewPlayer(ts.mu, ts.sigma)
 }
 
 // TrueSkill returns the conservative TrueSkill of a player. The maximum
@@ -158,5 +158,5 @@ func (ts Config) NewDefaultPlayer() Player {
 func (ts Config) TrueSkill(p Player) float64 {
 	trueSkill := p.Mu() - p.Sigma()*3
 
-	return math.Min(ts.Mu*2, math.Max(0, trueSkill))
+	return math.Min(ts.mu*2, math.Max(0, trueSkill))
 }

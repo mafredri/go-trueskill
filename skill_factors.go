@@ -29,7 +29,7 @@ func buildSkillFactors(ts Config, players []Player, draws []bool, varBag *collec
 
 	for i := 0; i < numPlayers; i++ {
 		priorSkill := players[i]
-		gpf := gf.GaussianPrior(priorSkill.Mean(), priorSkill.Variance()+(ts.Tau*ts.Tau), skillIndex[i], varBag)
+		gpf := gf.GaussianPrior(priorSkill.Mean(), priorSkill.Variance()+(ts.tau*ts.tau), skillIndex[i], varBag)
 		sf.skillPriorFactors = append(sf.skillPriorFactors, gpf)
 		factorList.Add(gpf)
 	}
@@ -39,7 +39,7 @@ func buildSkillFactors(ts Config, players []Player, draws []bool, varBag *collec
 	}
 
 	for i := 0; i < numPlayers; i++ {
-		glf := gf.GaussianLikeliehood(ts.Beta*ts.Beta, sf.playerPerformances[i], skillIndex[i], varBag, varBag)
+		glf := gf.GaussianLikeliehood(ts.beta*ts.beta, sf.playerPerformances[i], skillIndex[i], varBag, varBag)
 		sf.skillToPerformanceFactors = append(sf.skillToPerformanceFactors, glf)
 		factorList.Add(glf)
 	}
@@ -58,7 +58,7 @@ func buildSkillFactors(ts Config, players []Player, draws []bool, varBag *collec
 	for i, draw := range draws {
 		// TODO: Change hard-coded 2 to len(teamA) + len(teamB)
 		// (when teams are supported).
-		epsilon := drawMargin(ts.Beta, ts.DrawProb, 2)
+		epsilon := drawMargin(ts.beta, ts.drawProbability, 2)
 
 		var f factor.Factor
 		if draw {

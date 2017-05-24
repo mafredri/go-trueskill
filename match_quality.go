@@ -3,7 +3,7 @@ package trueskill
 import "math"
 
 func calculate2PlayerMatchQuality(ts Config, p1 Player, p2 Player) float64 {
-	betaSquared := ts.Beta * ts.Beta
+	betaSquared := ts.beta * ts.beta
 	p1SigmaSquared := p1.Sigma() * p1.Sigma()
 	p2SigmaSquared := p2.Sigma() * p2.Sigma()
 	pMean := p1.Mu() - p2.Mu()
