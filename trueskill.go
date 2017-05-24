@@ -144,9 +144,9 @@ func (ts Config) MatchQuality(players []Player) float64 {
 	return calculate2PlayerMatchQuality(ts, players[0], players[1])
 }
 
-// NewDefaultPlayer returns a new player with the mu and sigma from the game
+// NewPlayer returns a new player with the mu and sigma from the game
 // configuration.
-func (ts Config) NewDefaultPlayer() Player {
+func (ts Config) NewPlayer() Player {
 	return NewPlayer(ts.mu, ts.sigma)
 }
 

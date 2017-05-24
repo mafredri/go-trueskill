@@ -36,7 +36,7 @@ func TestTrueSkill_HeadToHead(t *testing.T) {
 	draw := false
 	ts := New()
 
-	players := []Player{ts.NewDefaultPlayer(), ts.NewDefaultPlayer()}
+	players := []Player{ts.NewPlayer(), ts.NewPlayer()}
 
 	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
 
@@ -54,7 +54,7 @@ func TestTrueSkill_HeadToHead_Draw(t *testing.T) {
 	draw := true
 	ts := New()
 
-	players := []Player{ts.NewDefaultPlayer(), ts.NewDefaultPlayer()}
+	players := []Player{ts.NewPlayer(), ts.NewPlayer()}
 
 	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
 
@@ -77,7 +77,7 @@ func TestTrueSkill_HeadToHead_NoDrawProbability(t *testing.T) {
 
 	ts := New(drawProbability)
 
-	players := []Player{ts.NewDefaultPlayer(), ts.NewDefaultPlayer()}
+	players := []Player{ts.NewPlayer(), ts.NewPlayer()}
 
 	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
 
@@ -148,10 +148,10 @@ func TestTrueSkill_4PFreeForAll(t *testing.T) {
 
 	ts := New(drawProbability)
 
-	players := []Player{ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer()}
+	players := []Player{ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer()}
 
 	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
 
@@ -180,14 +180,14 @@ func TestTrueSkill_8PFreeForAll(t *testing.T) {
 
 	ts := New(drawProbability)
 
-	players := []Player{ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer(),
-		ts.NewDefaultPlayer()}
+	players := []Player{ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer()}
 
 	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
 
@@ -200,7 +200,7 @@ func TestTrueSkill_MatchQuality_HeadToHead(t *testing.T) {
 
 	ts := New()
 
-	players := []Player{ts.NewDefaultPlayer(), ts.NewDefaultPlayer()}
+	players := []Player{ts.NewPlayer(), ts.NewPlayer()}
 
 	matchQuality := ts.MatchQuality(players)
 	if matchQuality == -1 {
@@ -212,7 +212,7 @@ func TestTrueSkill_MatchQuality_HeadToHead(t *testing.T) {
 		t.Errorf("Probability == %.1f, want %.1f", matchQuality, wantMatchQuality)
 	}
 
-	players = append(players, ts.NewDefaultPlayer())
+	players = append(players, ts.NewPlayer())
 	matchQuality = ts.MatchQuality(players)
 	if matchQuality != -1 {
 		t.Errorf("bad match quality for >2 players; got %v, want %v", matchQuality, -1)
@@ -222,7 +222,7 @@ func TestTrueSkill_MatchQuality_HeadToHead(t *testing.T) {
 func TestTrueSkillForPlayer(t *testing.T) {
 	ts := New(DrawProbabilityZero)
 
-	player := ts.NewDefaultPlayer()
+	player := ts.NewPlayer()
 	skill := ts.TrueSkill(player)
 	if skill != 0 {
 		t.Errorf("wrong trueskill for new player; got %v, want %v", skill, 0)
