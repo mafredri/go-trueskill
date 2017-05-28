@@ -73,8 +73,8 @@ func buildSkillFactors(ts Config, players []Player, draws []bool, varBag *collec
 	return sf, skillIndex, factorList
 }
 
-func skillFactorListToScheduleStep(facs []factor.Factor, idx int) []schedule.RunnableSchedule {
-	steps := []schedule.RunnableSchedule{}
+func skillFactorListToScheduleStep(facs []factor.Factor, idx int) []schedule.Runnable {
+	steps := []schedule.Runnable{}
 	for _, f := range facs {
 		step := schedule.NewStep(f.UpdateMessage, idx)
 		steps = append(steps, step)
@@ -85,7 +85,7 @@ func skillFactorListToScheduleStep(facs []factor.Factor, idx int) []schedule.Run
 
 // buildSkillFactorSchedule builds a full schedule that represents all the steps
 // in a factor graph.
-func buildSkillFactorSchedule(numPlayers int, sf skillFactors, loopMaxDelta float64) schedule.RunnableSchedule {
+func buildSkillFactorSchedule(numPlayers int, sf skillFactors, loopMaxDelta float64) schedule.Runnable {
 	// Prior schedule initializes the skill priors for all players and updates
 	// the performance
 	priorSchedule := schedule.NewSequence(
@@ -94,7 +94,7 @@ func buildSkillFactorSchedule(numPlayers int, sf skillFactors, loopMaxDelta floa
 	)
 
 	// Loop schedule iterates until desired accuracy is reached
-	var loopSchedule schedule.RunnableSchedule
+	var loopSchedule schedule.Runnable
 
 	if numPlayers == 2 {
 		// In two player mode there is no loop, just send the performance
@@ -105,19 +105,19 @@ func buildSkillFactorSchedule(numPlayers int, sf skillFactors, loopMaxDelta floa
 		)
 	} else {
 		// Forward schedule updates the factor graph in one direction
-		forwardSchedule := []schedule.RunnableSchedule{}
+		forwardSchedule := []schedule.Runnable{}
 		// ... and the backward schedule in the other direction
-		backwardSchedule := []schedule.RunnableSchedule{}
+		backwardSchedule := []schedule.Runnable{}
 
 		for i := 0; i < numPlayers-2; i++ {
-			forwardSteps := []schedule.RunnableSchedule{
+			forwardSteps := []schedule.Runnable{
 				schedule.NewStep(sf.performanceToPerformanceDifferencFactors[i].UpdateMessage, 0),
 				schedule.NewStep(sf.greatherThanOrWithinFactors[i].UpdateMessage, 0),
 				schedule.NewStep(sf.performanceToPerformanceDifferencFactors[i].UpdateMessage, 2),
 			}
 			forwardSchedule = append(forwardSchedule, forwardSteps...)
 
-			backwardSteps := []schedule.RunnableSchedule{
+			backwardSteps := []schedule.Runnable{
 				schedule.NewStep(sf.performanceToPerformanceDifferencFactors[numPlayers-2-i].UpdateMessage, 0),
 				schedule.NewStep(sf.greatherThanOrWithinFactors[numPlayers-2-i].UpdateMessage, 0),
 				schedule.NewStep(sf.performanceToPerformanceDifferencFactors[numPlayers-2-i].UpdateMessage, 1),
