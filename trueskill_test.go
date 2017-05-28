@@ -220,7 +220,7 @@ func TestTrueSkill_MatchQuality_HeadToHead(t *testing.T) {
 }
 
 func TestTrueSkillForPlayer(t *testing.T) {
-	ts := New(DrawProbabilityZero)
+	ts := New(DrawProbabilityZero())
 
 	player := ts.NewPlayer()
 	skill := ts.TrueSkill(player)

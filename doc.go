@@ -17,7 +17,7 @@ The TrueSkill algorithm can be tweaked with configuration options:
 		trueskill.Sigma(66.666),
 		trueskill.Beta(33.333),
 		trueskill.Tau(0.666),
-		trueskill.DrawProbabilityZero)
+		trueskill.DrawProbabilityZero())
 
 Adjust player skills:
 

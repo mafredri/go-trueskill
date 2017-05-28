@@ -81,10 +81,13 @@ func DrawProbability(prob float64) (Option, error) {
 	}, nil
 }
 
-// DrawProbabilityZero is an Option that sets the draw probability to
-// zero. It exists as a convenience function.
-func DrawProbabilityZero(c *Config) {
-	c.drawProbability = 0
+// DrawProbabilityZero returns an Option that sets the draw probability
+// to zero. Provides a convenient way to set the draw probability to
+// zero without checking for errors.
+func DrawProbabilityZero() Option {
+	return func(c *Config) {
+		c.drawProbability = 0
+	}
 }
 
 // New creates a new TrueSkill configuration with default values, unless

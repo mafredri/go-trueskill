@@ -7,7 +7,7 @@ import (
 )
 
 func Example() {
-	ts := trueskill.New(trueskill.DrawProbabilityZero)
+	ts := trueskill.New(trueskill.DrawProbabilityZero())
 	p1 := ts.NewPlayer()
 	p2 := ts.NewPlayer()
 	draw := false
