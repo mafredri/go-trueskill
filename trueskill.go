@@ -77,7 +77,7 @@ func DrawProbability(prob float64) (Option, error) {
 		return nil, errDrawProbabilityOutOfRange
 	}
 	return func(c *Config) {
-		c.drawProbability = prob / 100
+		c.drawProbability = prob
 	}, nil
 }
 
@@ -90,18 +90,23 @@ func DrawProbabilityZero() Option {
 	}
 }
 
-// New creates a new TrueSkill configuration with default values, unless
+// New creates a new TrueSkill configuration with default configuration.
+// The configuration can be changed by providing one or multiple Option.
 func New(opts ...Option) Config {
 	c := Config{
 		mu:              DefaultMu,
 		sigma:           DefaultSigma,
 		beta:            DefaultBeta,
 		tau:             DefaultTau,
-		drawProbability: DefaultDrawProbability / 100, // Percentage, between 0 and 100.
+		drawProbability: DefaultDrawProbability,
 	}
 	for _, o := range opts {
 		o(&c)
 	}
+
+	// Always represent the draw probability as a decimal value.
+	c.drawProbability /= 100
+
 	return c
 }
 
