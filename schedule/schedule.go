@@ -4,13 +4,13 @@ package schedule
 
 import "math"
 
-// Runnable provides an interface for the run function.
-type Runnable interface {
+// Runner provides an interface for the run function.
+type Runner interface {
 	Run(depth, maxDepth int) float64
 }
 
 // Run runs a schedule starting from zero depth.
-func Run(schedule Runnable, maxDepth int) float64 {
+func Run(schedule Runner, maxDepth int) float64 {
 	return schedule.Run(0, maxDepth)
 }
 
@@ -20,7 +20,7 @@ type step struct {
 }
 
 // NewStep returns a step in the schedule with provided function and input.
-func NewStep(function func(i int) float64, input int) Runnable {
+func NewStep(function func(i int) float64, input int) Runner {
 	return step{input, function}
 }
 
@@ -31,11 +31,11 @@ func (s step) Run(depth, maxDepth int) float64 {
 }
 
 type sequence struct {
-	sequences []Runnable
+	sequences []Runner
 }
 
 // NewSequence returns a new sequence of runnable schedules.
-func NewSequence(sequences ...Runnable) Runnable {
+func NewSequence(sequences ...Runner) Runner {
 	return sequence{sequences}
 }
 
@@ -51,12 +51,12 @@ func (s sequence) Run(depth, maxDepth int) float64 {
 }
 
 type loop struct {
-	schedule Runnable
+	schedule Runner
 	maxDelta float64
 }
 
 // NewLoop returns a new runnable loop schedule.
-func NewLoop(schedule Runnable, maxDelta float64) Runnable {
+func NewLoop(schedule Runner, maxDelta float64) Runner {
 	return loop{schedule, maxDelta}
 }
 
