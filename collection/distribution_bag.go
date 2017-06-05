@@ -10,7 +10,7 @@ type DistributionBag struct {
 
 // NewDistributionBag returns a new distribution bag.
 func NewDistributionBag(prior gaussian.Gaussian) *DistributionBag {
-	return &DistributionBag{prior, []gaussian.Gaussian{}}
+	return &DistributionBag{prior: prior}
 }
 
 // NextIndex initializes the next free slot in the bag with the default gaussian
@@ -22,7 +22,7 @@ func (db *DistributionBag) NextIndex() int {
 
 // Reset empties the distribution bag by replacing it with an empty one.
 func (db *DistributionBag) Reset() {
-	db.bag = []gaussian.Gaussian{}
+	db.bag = nil
 }
 
 // Len returns the length (size) of the bag.

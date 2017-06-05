@@ -113,9 +113,9 @@ func New(opts ...Option) Config {
 // AdjustSkills returns the new skill level distribution for all provided
 // players based on game configuration and draw status.
 func (ts Config) AdjustSkills(players []Player, draw bool) (newSkills []Player, probability float64) {
-	draws := []bool{}
-	for i := 0; i < len(players)-1; i++ {
-		draws = append(draws, draw)
+	draws := make([]bool, len(players)-1)
+	for i := range draws {
+		draws[i] = draw
 	}
 
 	// TODO: Rewrite the distribution bag and simplify the factor list as well

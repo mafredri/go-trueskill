@@ -15,11 +15,6 @@ type List struct {
 	list []Factor
 }
 
-// NewList returns a new list of factors.
-func NewList() List {
-	return List{[]Factor{}}
-}
-
 // Add a factor to the graph.
 func (fl *List) Add(f Factor) Factor {
 	fl.list = append(fl.list, f)

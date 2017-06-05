@@ -16,13 +16,13 @@ type skillFactors struct {
 }
 
 func buildSkillFactors(ts Config, players []Player, draws []bool, varBag *collection.DistributionBag) (skillFactors, []int, factor.List) {
-	sf := skillFactors{}
 	gf := factor.NewGaussianFactors()
-	factorList := factor.NewList()
+	var sf skillFactors
+	var factorList factor.List
 
 	numPlayers := len(players)
 
-	skillIndex := []int{}
+	var skillIndex []int
 	for i := 0; i < numPlayers; i++ {
 		skillIndex = append(skillIndex, varBag.NextIndex())
 	}
@@ -74,7 +74,7 @@ func buildSkillFactors(ts Config, players []Player, draws []bool, varBag *collec
 }
 
 func skillFactorListToScheduleStep(facs []factor.Factor, idx int) []schedule.Runnable {
-	steps := []schedule.Runnable{}
+	var steps []schedule.Runnable
 	for _, f := range facs {
 		step := schedule.NewStep(f.UpdateMessage, idx)
 		steps = append(steps, step)
@@ -105,9 +105,9 @@ func buildSkillFactorSchedule(numPlayers int, sf skillFactors, loopMaxDelta floa
 		)
 	} else {
 		// Forward schedule updates the factor graph in one direction
-		forwardSchedule := []schedule.Runnable{}
+		var forwardSchedule []schedule.Runnable
 		// ... and the backward schedule in the other direction
-		backwardSchedule := []schedule.Runnable{}
+		var backwardSchedule []schedule.Runnable
 
 		for i := 0; i < numPlayers-2; i++ {
 			forwardSteps := []schedule.Runnable{
