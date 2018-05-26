@@ -1,6 +1,6 @@
 package collection
 
-import "github.com/mafredri/go-gaussian"
+import "github.com/mafredri/go-trueskill/gaussian"
 
 // DistributionBag is a storage for gaussian distributions.
 type DistributionBag struct {

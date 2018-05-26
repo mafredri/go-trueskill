@@ -3,7 +3,7 @@ package factor
 import (
 	"math"
 
-	"github.com/mafredri/go-gaussian"
+	"github.com/mafredri/go-trueskill/gaussian"
 )
 
 // VGreaterThan returns the additive correction for a single-sided truncated

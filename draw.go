@@ -3,7 +3,7 @@ package trueskill
 import (
 	"math"
 
-	"github.com/mafredri/go-gaussian"
+	"github.com/mafredri/go-trueskill/gaussian"
 )
 
 func drawProbability(beta, drawMargin, totalPlayers float64) float64 {
