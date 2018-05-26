@@ -162,7 +162,7 @@ func (ts Config) NewPlayer() Player {
 // TrueSkill is two times mu, in the default configuration a value between
 // zero and fifty is returned.
 func (ts Config) TrueSkill(p Player) float64 {
-	trueSkill := p.Mu() - p.Sigma()*3
+	trueSkill := p.Mu() - (ts.mu/ts.sigma)*p.Sigma()
 
 	return math.Min(ts.mu*2, math.Max(0, trueSkill))
 }
