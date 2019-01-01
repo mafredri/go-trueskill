@@ -6,9 +6,10 @@ import (
 	"github.com/mafredri/go-trueskill/mathextra"
 )
 
-const epsilon = 1e-5 // Precision for floating point comparison
+const defaultEpsilon = 1e-5 // Precision for floating point comparison
 
-func testPlayerSkills(t *testing.T, playerSkills []Player, wantSkill []float64) {
+func testPlayerSkillsWithErrorMargin(
+	t *testing.T, playerSkills []Player, wantSkill []float64, epsilon float64) {
 	for i, p := range playerSkills {
 		if !mathextra.Float64AlmostEq(p.Mu(), wantSkill[i*2], epsilon) {
 			t.Errorf("p%d.Mu() == %.5f, want %.5f", i, p.Mu(), wantSkill[i*2])
@@ -19,9 +20,13 @@ func testPlayerSkills(t *testing.T, playerSkills []Player, wantSkill []float64) 
 	}
 }
 
+func testPlayerSkills(t *testing.T, playerSkills []Player, wantSkills []float64) {
+	testPlayerSkillsWithErrorMargin(t, playerSkills, wantSkills, defaultEpsilon)
+}
+
 func testProbability(t *testing.T, probability, wantProbability float64) {
 	probability = probability * 100
-	if !mathextra.Float64AlmostEq(probability, wantProbability, epsilon) {
+	if !mathextra.Float64AlmostEq(probability, wantProbability, defaultEpsilon) {
 		t.Errorf("Probability == %.5f, want %.5f", probability, wantProbability)
 	}
 }
@@ -156,6 +161,43 @@ func TestTrueSkill_4PFreeForAll(t *testing.T) {
 	newPlayerSkills, probability := ts.AdjustSkills(players, draw)
 
 	testPlayerSkills(t, newPlayerSkills, wantSkill)
+	testProbability(t, probability, wantProbability)
+}
+
+func TestTrueSkill_4PFreeForAll_WithDraws(t *testing.T) {
+	wantSkill := []float64{
+		28.162, 5.712,
+		28.162, 5.712,
+		21.836, 5.712,
+		21.836, 5.712,
+	}
+	wantProbability := 0.09406
+
+	drawProbability, err := DrawProbability(10.0)
+	if err != nil {
+		t.Error(err)
+	}
+
+	draws := []bool{
+		true,
+		false,
+		true,
+	}
+
+	ts := New(drawProbability)
+
+	players := []Player{
+		ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer(),
+		ts.NewPlayer()}
+
+	newPlayerSkills, probability := ts.AdjustSkillsWithDraws(players, draws)
+
+	// In draw, the skill calculation for two drawed players are not guaranteed
+	// to be the same, but should be close. We gives a larger epsilon here as
+	// the error margin
+	testPlayerSkillsWithErrorMargin(t, newPlayerSkills, wantSkill, 0.01)
 	testProbability(t, probability, wantProbability)
 }
 
